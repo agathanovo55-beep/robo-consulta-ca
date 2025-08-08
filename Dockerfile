@@ -1,6 +1,9 @@
 # Usar uma imagem oficial do Node.js
 FROM node:18-slim
 
+# Adicionado para evitar que pacotes peçam interação durante a instalação
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Instalar as dependências necessárias para o Puppeteer
 RUN apt-get update && apt-get install -y \
     ca-certificates \
@@ -47,7 +50,10 @@ WORKDIR /usr/src/app
 # Copia os arquivos de configuração do Node.js
 COPY package*.json ./
 
-# Instala as dependências do Node.js
+# Diz ao npm para NÃO baixar o Chrome, pois já instalamos no sistema
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
+# Instala as dependências do Node.js (agora será mais rápido)
 RUN npm install
 
 # Copia o resto do código da aplicação
